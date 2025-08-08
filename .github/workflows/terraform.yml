@@ -1,0 +1,59 @@
+name: Terraform CI/CD
+
+on:
+  pull_request:
+    branches: [ main ]
+  push:
+    branches: [ main ]
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+
+    env:
+      GOOGLE_CREDENTIALS: ${{ secrets.GCP_SA_KEY }}
+      TF_IN_AUTOMATION: "true"
+      TF_INPUT: "false"
+      TF_VAR_project_id: "trading-prod-468212"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.7.5
+
+      - name: Terraform Init
+        run: terraform init -input=false
+        working-directory: external_tables/asset_name_master
+
+      - name: Terraform Format
+        run: terraform fmt -check
+        working-directory: external_tables/asset_name_master
+
+      - name: Terraform Validate
+        run: terraform validate
+        working-directory: external_tables/asset_name_master
+
+      # PR時は plan だけ出す
+      - name: Terraform Plan (PR)
+        if: github.event_name == 'pull_request'
+        run: terraform plan -no-color -out=tfplan
+        working-directory: external_tables/asset_name_master
+
+      # main へ push（=マージ後）は apply
+      - name: Terraform Plan (main)
+        if: github.event_name == 'push'
+        run: terraform plan -no-color -out=tfplan
+        working-directory: external_tables/asset_name_master
+
+      - name: Terraform Apply (main)
+        if: github.event_name == 'push'
+        run: terraform apply -auto-approve tfplan
+        working-directory: external_tables/asset_name_master
