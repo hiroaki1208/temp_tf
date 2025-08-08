@@ -25,5 +25,4 @@ variable "table_schema" {
     mode        = string # モード (REQUIRED, NULLABLE, REPEATED)
     description = string # 列の説明
   }))
-}  
 }
