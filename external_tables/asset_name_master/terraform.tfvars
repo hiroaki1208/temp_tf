@@ -5,22 +5,22 @@ source_uris = ["https://docs.google.com/spreadsheets/d/15ICFHR24bM19dKYw-TT9fjBw
 sheet_range = "master_asset_name!A:C"
 
 table_schema = [
-    {
-      name        = "ticker"
-      type        = "STRING"
-      mode        = "NULLABLE"
-      description = "ticker名"
-    },
-    {
-      name        = "asset_type"
-      type        = "STRING"
-      mode        = "NULLABLE"
-      description = "アセット種別(株,金利..)"
-    },
-    {
-      name        = "asset_name"
-      type        = "STRING"
-      mode        = "NULLABLE"
-      description = "アセット名"
-    }
-  ]
+  {
+    name        = "ticker"
+    type        = "STRING"
+    mode        = "NULLABLE"
+    description = "ticker名"
+  },
+  {
+    name        = "asset_type"
+    type        = "STRING"
+    mode        = "NULLABLE"
+    description = "アセット種別(株,金利..)"
+  },
+  {
+    name        = "asset_name"
+    type        = "STRING"
+    mode        = "NULLABLE"
+    description = "アセット名"
+  }
+]

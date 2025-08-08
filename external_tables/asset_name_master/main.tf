@@ -31,17 +31,24 @@ resource "google_project_service" "bigquery" {
 # Google Drive APIの有効化
 # Google Driveからデータを読み取るために必要なAPIを有効にする
 resource "google_project_service" "drive" {
-  project            = var.project_id            # 対象プロジェクト
-  service            = "drive.googleapis.com"    # Google Drive APIのサービス名
-  disable_on_destroy = false                     # Terraform destroyでもAPIを無効化しない
+  project            = var.project_id         # 対象プロジェクト
+  service            = "drive.googleapis.com" # Google Drive APIのサービス名
+  disable_on_destroy = false                  # Terraform destroyでもAPIを無効化しない
+}
+
+# BigQueryデータセットの作成
+# 外部テーブルを格納するためのデータセット（データベースのようなもの）を作成
+resource "google_bigquery_dataset" "this" {
+  dataset_id = var.dataset_id # データセットの一意な識別子（例: "external_data"）
+  location   = var.location   # データの保存場所（例: "US", "asia-northeast1"）
 }
 
 # Google Driveスプレッドシートの外部テーブル作成
 # BigQueryから直接Google Driveのスプレッドシートを読み取るテーブルを定義
 resource "google_bigquery_table" "external_sheet" {
-  dataset_id          = google_bigquery_dataset.this.dataset_id  # 上で作成したデータセットを参照
-  table_id            = var.table_id                             # テーブルの名前（例: "sheet_a_data"）
-  deletion_protection = false                                    # 削除保護を無効（テスト環境用）
+  dataset_id          = google_bigquery_dataset.this.dataset_id # 上で作成したデータセットを参照
+  table_id            = var.table_id                            # テーブルの名前（例: "sheet_a_data"）
+  deletion_protection = false                                   # 削除保護を無効（テスト環境用）
 
   # 外部データの設定ブロック
   external_data_configuration {
