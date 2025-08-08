@@ -3,12 +3,12 @@
 terraform {
   # 必要なTerraformのバージョンを指定（1.6.0以上）
   required_version = ">= 1.6.0"
-  
+
   # 使用するプロバイダーとそのバージョンを指定
   required_providers {
     google = {
-      source  = "hashicorp/google"  # Google Cloudプロバイダーのソース
-      version = "~> 5.40"           # バージョン5.40系を使用
+      source  = "hashicorp/google" # Google Cloudプロバイダーのソース
+      version = "~> 5.40"          # バージョン5.40系を使用
     }
   }
 }
@@ -16,16 +16,16 @@ terraform {
 # Google Cloudプロバイダーの設定
 # 接続先のプロジェクトとリージョンを指定
 provider "google" {
-  project = var.project_id  # 変数で指定されるプロジェクトIDを使用
-  region  = var.region      # 変数で指定されるリージョンを使用
+  project = var.project_id # 変数で指定されるプロジェクトIDを使用
+  region  = var.region     # 変数で指定されるリージョンを使用
 }
 
 # BigQuery APIの有効化
 # BigQueryを使用するために必要なAPIサービスを有効にする
 resource "google_project_service" "bigquery" {
-  project            = var.project_id              # 対象プロジェクト
-  service            = "bigquery.googleapis.com"   # BigQuery APIのサービス名
-  disable_on_destroy = false                       # Terraform destroyでもAPIを無効化しない
+  project            = var.project_id            # 対象プロジェクト
+  service            = "bigquery.googleapis.com" # BigQuery APIのサービス名
+  disable_on_destroy = false                     # Terraform destroyでもAPIを無効化しない
 }
 
 # Google Drive APIの有効化
@@ -52,14 +52,14 @@ resource "google_bigquery_table" "external_sheet" {
 
   # 外部データの設定ブロック
   external_data_configuration {
-    source_format = "GOOGLE_SHEETS"                # データソースの形式（Google Sheets）
-    autodetect    = false                          # スキーマ（列の型）を手動で定義
-    source_uris   = var.source_uris                # Google DriveスプレッドシートのURL配列
+    source_format = "GOOGLE_SHEETS" # データソースの形式（Google Sheets）
+    autodetect    = false           # スキーマ（列の型）を手動で定義
+    source_uris   = var.source_uris # Google DriveスプレッドシートのURL配列
 
     # Google Sheets固有のオプション設定
     google_sheets_options {
-      range = var.sheet_range  # 読み取り範囲（例: "シートA!A:Z" or "シートA!A1:D100"）
-                               # 範囲を指定しない場合は、シート全体が対象
+      range = var.sheet_range # 読み取り範囲（例: "シートA!A:Z" or "シートA!A1:D100"）
+                              # 範囲を指定しない場合は、シート全体が対象
     }
   }
 
@@ -70,7 +70,7 @@ resource "google_bigquery_table" "external_sheet" {
   # 依存関係の定義
   # BigQueryとDrive APIが有効化されてからテーブルを作成
   depends_on = [
-    google_project_service.bigquery,  # BigQuery APIの有効化を待つ
-    google_project_service.drive      # Google Drive APIの有効化を待つ
+    google_project_service.bigquery, # BigQuery APIの有効化を待つ
+    google_project_service.drive     # Google Drive APIの有効化を待つ
   ]
 }
