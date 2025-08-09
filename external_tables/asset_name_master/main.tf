@@ -59,7 +59,6 @@ resource "google_bigquery_table" "external_sheet" {
     # Google Sheets固有のオプション設定
     google_sheets_options {
       range = var.sheet_range # 読み取り範囲（例: "シートA!A:Z" or "シートA!A1:D100"）
-                              # 範囲を指定しない場合は、シート全体が対象
     }
   }
 
