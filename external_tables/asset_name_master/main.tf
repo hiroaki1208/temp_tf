@@ -41,7 +41,7 @@ resource "google_project_service" "drive" {
 # BigQueryから直接Google Driveのスプレッドシートを読み取るテーブルを定義
 resource "google_bigquery_table" "external_sheet" {
   project             = var.project_id
-  dataset_id          = google_bigquery_dataset.this.dataset_id
+  dataset_id          = var.dataset_id
   table_id            = var.table_id
   deletion_protection = false
 
