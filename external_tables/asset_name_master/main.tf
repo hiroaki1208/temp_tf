@@ -16,8 +16,9 @@ terraform {
 # Google Cloudプロバイダーの設定
 # 接続先のプロジェクトとリージョンを指定
 provider "google" {
-  project = var.project_id # 変数で指定されるプロジェクトIDを使用
-  region  = var.region     # 変数で指定されるリージョンを使用
+  project     = var.project_id                          # 変数で指定されるプロジェクトIDを使用
+  region      = var.region                              # 変数で指定されるリージョンを使用
+  credentials = var.google_credentials != null ? var.google_credentials : null # 認証情報（環境変数から取得）
 }
 
 # BigQuery APIの有効化

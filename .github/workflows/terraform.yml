@@ -16,6 +16,7 @@ jobs:
 
     env:
       GOOGLE_CREDENTIALS: ${{ secrets.GCP_SA_KEY }}
+      TF_VAR_google_credentials: ${{ secrets.GCP_SA_KEY }}
       TF_IN_AUTOMATION: "true"
       TF_INPUT: "false"
       TF_VAR_project_id: "trading-prod-468212"

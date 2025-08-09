@@ -7,6 +7,16 @@ variable "location" {
   type    = string
   default = "asia-northeast1"
 } # BigQuery のリージョン/マルチリージョン
+
+# Google Cloud認証情報
+# CI/CD環境ではサービスアカウントキーを環境変数から取得
+variable "google_credentials" {
+  description = "Google Cloud サービスアカウントキー（JSON文字列）"
+  type        = string
+  default     = null
+  sensitive   = true # 機密情報として扱う
+}
+
 variable "dataset_id" { type = string }
 variable "table_id" { type = string }
 variable "source_uris" { type = list(string) } # Google Sheets のURL（1つでも配列で）
