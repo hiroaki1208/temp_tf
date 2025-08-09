@@ -53,7 +53,8 @@ resource "google_bigquery_table" "external_sheet" {
 
     # Google Sheets固有のオプション設定
     google_sheets_options {
-      range = var.sheet_range
+      range             = var.sheet_range
+      skip_leading_rows = 1
     }
   }
 
