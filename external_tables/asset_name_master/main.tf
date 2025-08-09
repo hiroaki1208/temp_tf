@@ -37,14 +37,6 @@ resource "google_project_service" "drive" {
   disable_on_destroy = false
 }
 
-# BigQueryデータセットの作成
-# 外部テーブルを格納するためのデータセット（データベースのようなもの）を作成
-resource "google_bigquery_dataset" "this" {
-  project    = var.project_id
-  dataset_id = var.dataset_id
-  location   = var.location
-}
-
 # Google Driveスプレッドシートの外部テーブル作成
 # BigQueryから直接Google Driveのスプレッドシートを読み取るテーブルを定義
 resource "google_bigquery_table" "external_sheet" {
