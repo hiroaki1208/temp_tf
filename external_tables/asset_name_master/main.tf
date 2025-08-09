@@ -54,7 +54,6 @@ resource "google_bigquery_table" "external_sheet" {
     # Google Sheets固有のオプション設定
     google_sheets_options {
       range             = var.sheet_range
-      # 先頭行をスキップ
       skip_leading_rows = 1
     }
   }
