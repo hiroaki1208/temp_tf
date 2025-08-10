@@ -5,6 +5,20 @@
 - bigqueryのアップロード先datasetは`TEMP`にする
 - ディレクトリの第一階層はGCPのサービス名のイメージ
   - でも、bigqueryだけは`external_tables`みたいな個別サービス？にする
+# `external_tables`を増やしたいとき
+
+- ディレクトリ追加して、ファイルコピー。`terraform.tfvars`のみかえればOKそう
+- あと、`terraform.yml`の以下も変更必要
+    ```
+        strategy:
+        matrix:
+            directory:
+            - external_tables/asset_name_master
+            - external_tables/asset_status_history
+    ```
+- それなら、なんかもうちょっとうまくできそう？
+  - `main.tf`, `variables.tf`をテンプレにして、各ディレクトリ内でハイパーリンクで参照するとか？
+  - ハイパーリンク参照ってwindowsでできる？
 
 # Terraform コマンド概要
 
