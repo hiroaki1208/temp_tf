@@ -13,6 +13,11 @@ permissions:
 jobs:
   terraform:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        directory:
+          - external_tables/asset_name_master
+          - external_tables/asset_status_history
 
     env:
       GOOGLE_CREDENTIALS: ${{ secrets.GCP_SA_KEY }}
@@ -32,29 +37,29 @@ jobs:
 
       - name: Terraform Init
         run: terraform init -input=false
-        working-directory: external_tables/asset_name_master
+        working-directory: ${{ matrix.directory }}
 
       - name: Terraform Format
         run: terraform fmt -check
-        working-directory: external_tables/asset_name_master
+        working-directory: ${{ matrix.directory }}
 
       - name: Terraform Validate
         run: terraform validate
-        working-directory: external_tables/asset_name_master
+        working-directory: ${{ matrix.directory }}
 
       # PR時は plan だけ出す
       - name: Terraform Plan (PR)
         if: github.event_name == 'pull_request'
         run: terraform plan -no-color -out=tfplan
-        working-directory: external_tables/asset_name_master
+        working-directory: ${{ matrix.directory }}
 
       # main へ push（=マージ後）は apply
       - name: Terraform Plan (main)
         if: github.event_name == 'push'
         run: terraform plan -no-color -out=tfplan
-        working-directory: external_tables/asset_name_master
+        working-directory: ${{ matrix.directory }}
 
       - name: Terraform Apply (main)
         if: github.event_name == 'push'
         run: terraform apply -auto-approve tfplan
-        working-directory: external_tables/asset_name_master
+        working-directory: ${{ matrix.directory }}
