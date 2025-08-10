@@ -47,54 +47,16 @@ jobs:
         run: terraform validate
         working-directory: ${{ matrix.directory }}
 
-      # 既存リソースをstateにインポート（エラーが出ても継続）
-      - name: Import Existing Resources (if any)
-        run: |
-          # テーブル名を動的に設定
-          if [[ "${{ matrix.directory }}" == "external_tables/asset_name_master" ]]; then
-            TABLE_ID="raw_asset_name_master"
-          elif [[ "${{ matrix.directory }}" == "external_tables/asset_status_history" ]]; then
-            TABLE_ID="raw_asset_status_history"
-          fi
-          
-          # 既存のBigQueryテーブルをインポートを試行（失敗しても継続）
-          echo "Attempting to import existing table: $TABLE_ID"
-          terraform import google_bigquery_table.external_sheet "$TF_VAR_project_id:TEMP:$TABLE_ID" || echo "Import failed or resource doesn't exist - continuing..."
-        working-directory: ${{ matrix.directory }}
-        continue-on-error: true
-
       # PR時は plan だけ出す
       - name: Terraform Plan (PR)
         if: github.event_name == 'pull_request'
-        run: |
-          # 通常のplanを実行
-          terraform plan -no-color -out=tfplan
-          
-          # planに変更がある場合の詳細確認
-          if terraform show -no-color tfplan | grep -E "(will be created|will be updated|will be destroyed)" > /dev/null; then
-            echo "Changes detected in plan"
-            # 既存テーブルとの競合を避けるため、replaceオプションでplanを再作成
-            terraform plan -no-color -replace=google_bigquery_table.external_sheet -out=tfplan
-          else
-            echo "No changes detected"
-          fi
+        run: terraform plan -no-color -out=tfplan
         working-directory: ${{ matrix.directory }}
 
       # main へ push（=マージ後）は apply
       - name: Terraform Plan (main)
         if: github.event_name == 'push'
-        run: |
-          # 通常のplanを実行
-          terraform plan -no-color -out=tfplan
-          
-          # planに変更がある場合の詳細確認
-          if terraform show -no-color tfplan | grep -E "(will be created|will be updated|will be destroyed)" > /dev/null; then
-            echo "Changes detected in plan"
-            # 既存テーブルとの競合を避けるため、replaceオプションでplanを再作成
-            terraform plan -no-color -replace=google_bigquery_table.external_sheet -out=tfplan
-          else
-            echo "No changes detected"
-          fi
+        run: terraform plan -no-color -out=tfplan
         working-directory: ${{ matrix.directory }}
 
       - name: Terraform Apply (main)
